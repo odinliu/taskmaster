@@ -74,11 +74,13 @@ func (s *Supervisor) Start() {
 		for s.running {
 			select {
 			case <-s.ch:
+				s.options.Logger.Printf("receive panics...\n")
 				s.panicTimes++
 				if s.options.NeedRestart {
 					go func() {
 						select {
 						case <-time.After(s.options.RestartDelay):
+							s.options.Logger.Printf("starting new work...\n")
 							go s.runWithRecover()
 						}
 					}()
