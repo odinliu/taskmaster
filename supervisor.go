@@ -99,12 +99,11 @@ func (s *Supervisor) Stop() {
 }
 
 func (s *Supervisor) runWithRecover() {
-	defer func() {
-		if r := recover(); r != nil {
-			s.options.Logger.Printf("%v\n", r)
-			// notify supervisor
-			s.ch <- 1
-		}
-	}()
-	s.runnable()
+	RecoverableFunc(s.runnable, func(r interface{}) {
+		s.options.Logger.Printf(
+			"panic[%v], recovering...",
+			r,
+		)
+		s.ch <- 1
+	})()
 }
