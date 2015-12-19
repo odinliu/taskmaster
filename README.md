@@ -1,4 +1,5 @@
 # taskmaster
+[![GoDoc](https://godoc.org/github.com/odinliu/taskmaster?status.png)](https://godoc.org/github.com/odinliu/taskmaster)
 A simple supervised goroutine pool based on worker-thread model.
 
 # Go version
@@ -6,6 +7,9 @@ test on go v1.5.1
 
 # Installation
 go get github.com/odinliu/taskmaster
+
+# Usage
+See godoc [here](https://godoc.org/github.com/odinliu/taskmaster)
 
 # Example
 ```
