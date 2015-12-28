@@ -29,6 +29,7 @@ func main() {
 		MaxFailureTime: 1 * 100,
 		MaxWorkerNum:   1,
 		Logger:         &MyLogger{},
+		IsDebug:        false,
 	})
 	master.Start()
 	// infinite loop, quit with ctrl+c

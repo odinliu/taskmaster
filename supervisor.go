@@ -25,6 +25,9 @@ type SuperOption struct {
 	// a logger should implement `Loggable`
 	// silentLogger for default
 	Logger Loggable
+	// if `IsDebug` is true, supervisor won't recovery from panics.
+	// for debug, if you want to see where panic happens
+	IsDebug bool
 }
 
 type silentLogger struct{}
@@ -37,6 +40,7 @@ var defaultOption = SuperOption{
 	MaxFailureTime: 3,
 	MaxWorkerNum:   1,
 	Logger:         &silentLogger{},
+	IsDebug:        false,
 }
 
 type Supervisor struct {
@@ -69,7 +73,11 @@ func (s *Supervisor) Start() {
 	s.ch = make(chan int, s.options.MaxWorkerNum)
 	go func() {
 		for i := 0; i < s.options.MaxWorkerNum; i++ {
-			go s.runWithRecover()
+			if s.options.IsDebug {
+				go s.runnable()
+			} else {
+				go s.runWithRecover()
+			}
 		}
 		for s.running {
 			select {
@@ -81,7 +89,11 @@ func (s *Supervisor) Start() {
 						select {
 						case <-time.After(s.options.RestartDelay):
 							s.options.Logger.Printf("starting new work...\n")
-							go s.runWithRecover()
+							if s.options.IsDebug {
+								go s.runnable()
+							} else {
+								go s.runWithRecover()
+							}
 						}
 					}()
 				}
